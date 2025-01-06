@@ -18,9 +18,9 @@ const transporter = nodemailer.createTransport({
 
    // Configuration
    cloudinary.config({ 
-    cloud_name:process.env. CLOUD_CLOUD_NAME,
-    api_key:process.env. CLOUD_API_KEY ,
-    api_secret:process.env.CLOUD_API_SECRET 
+    cloud_name:'dvryhevqf',
+    api_key:'499764812538244' ,
+    api_secret:"dZxyLgZPj9lWcMfajM6gTAGjGTc"
 });
     
     // Upload an image
@@ -52,19 +52,20 @@ const generateAccessToken = (user) => {
 const generateRefreshToken = (user) => {
     return jwt.sign({ email: user.email }, process.env.REFRESH_JWT_TOKEN_SECRET, { expiresIn: '7d' });
 }
+
+
 const registerUser = async (req, res) => {
-    const { email, password ,name,uploadImageToCloudinary} = req.body;
+    
+    const { email, password ,name,} = req.body;
     if (!email) return res.status(400).json({ message: "email required" });
     if (!password) return res.status(400).json({ message: "password required" });
-    if (!req.file) return res.status(400).json({message:"no image file upload"})
-        const uploadResult=await uploadImageToCloudinary(req.file.path) 
     const user = await User.findOne({ email: email });
     if (user) return res.status(401).json({ message: "user already exist" });
     const createUser = await User.create({
       email,
       password,
       name,
-      url:uploadResult
+      
     });
     res.json({ message: "user registered successfully", data: createUser });
   };
@@ -143,8 +144,47 @@ const authenticatonUser = (req, res, next) => {
     res.status(500).json({ message: "Failed to send email" });
 }
 };
+
+const getallregister=async(req,res)=>{
+    try {
+        const page=req.query.page||1
+        const limit=req.query||3
+        const skip=(page-1)*limit
+        const users = await User.find({}).skip(skip).limit(limit);
+        const totalUsers = await User.countDocuments({});
+        const totalPages = Math.ceil(totalUsers / limit);
+
+
+        res.status(200).json({
+            message: "Users fetched successfully",
+            users,
+            currentPage: page,
+            totalPages,
+            totalUsers,
+        });
+    } catch (error) {
+        res.json(error)
+        res.status(500).json({ message: "Failed to fetch users" });
+    }
+}
+
+const uploadimage=async(req,res)=>{
+    if (!req.file) return res.status(400).json({message:"no image file upload"})
+        try {
+            
+    const uploadResult=await uploadImageToCloudinary(req.file.path) 
+    if(!uploadResult)return res.status(500).json({message:"uploadresult failed"})
+        res.status(200).json({message:"image successfully", image:uploadResult})
+        } catch (error) {
+            console.log(error);
+        res.status(500).json({message:"upload failed"})
+        
+        }
+}
         
      
     
 
-export { registerUser, longinUser, logoutUser, refreshToken, authenticatonUser,sendTestemail }
+export { registerUser, longinUser, logoutUser, refreshToken, authenticatonUser,sendTestemail ,getallregister,uploadimage
+
+}
