@@ -1,7 +1,7 @@
 import mongoose, { Schema, Types }  from "mongoose";
 import bcrypt from 'bcrypt'
 const userSchema=new  mongoose.Schema({
-    name:{
+    username:{
         type:String,
         required:true,
     },
@@ -17,6 +17,10 @@ const userSchema=new  mongoose.Schema({
         type:String,
 
     },
+    product:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'Product',
+    }
     
 },{
     timestamps:true,

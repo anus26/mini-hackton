@@ -7,6 +7,7 @@ import cookieParser  from 'cookie-parser'
 import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt"
 import userRoutes from "./src/routes/user.routes.js";
+import productRoutes from "./src/routes/product.routes.js";
 
    
 const app = express();
@@ -60,6 +61,8 @@ app.post("/checkedtoken",(req,res)=>{
 })
 
 app.use('/api/v1',userRoutes);
+app.use('/api/v1',productRoutes);
+
 
 
 connectDB()

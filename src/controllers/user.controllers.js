@@ -56,7 +56,7 @@ const generateRefreshToken = (user) => {
 
 const registerUser = async (req, res) => {
     
-    const { email, password ,name,} = req.body;
+    const { email, password ,username,} = req.body;
     if (!email) return res.status(400).json({ message: "email required" });
     if (!password) return res.status(400).json({ message: "password required" });
     const user = await User.findOne({ email: email });
@@ -64,7 +64,7 @@ const registerUser = async (req, res) => {
     const createUser = await User.create({
       email,
       password,
-      name,
+      username,
       
     });
     res.json({ message: "user registered successfully", data: createUser });
