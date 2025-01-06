@@ -38,18 +38,19 @@ const newProducts = async (req, res) => {
       }
   
       
-      const { name, description, userId } = req.body;
+      const { name, description, userId ,price} = req.body;
   
       
       if (!name) return res.status(400).json({ message: "Name is required" });
       if (!description) return res.status(400).json({ message: "Description is required" });
       if (!userId) return res.status(400).json({ message: "User ID is required" });
-  
+      if (!price) return res.status(400).json({ message: "price is required" });
       
       const newProduct = await Products.create({
         imageUrl: uploadResult, 
         name,
         description,
+        price,
         createdby: userId,
       });
   
@@ -105,9 +106,37 @@ const getProductByID = async (req, res) => {
       res.status(500).json({ message: "An unexpected error occurred" });
     }
   };
-  
 
-export { newProducts,getProduct ,getProductByID};
+  const updateproduct=async(req,res)=>{
+    try {
+        const {id}=req.params
+        const {name,description,imageUrl,price}=req.body
+        const checkproduct=await Products.findById(id)
+        if(!checkproduct)return res.status(400).json({message :"product not found"})
+       const updatedproduct=await Products.findByIdAndUpdate(id,{name,description,imageUrl,price})
+        res.status(200).json({
+            message: "Product updated successfully",
+            data: updatedproduct,
+          });
+
+    } catch (error) {
+        console.error("Error updating product:", error);
+        res.status(500).json({ message: "An unexpected error occurred" });
+    }
+  }  
+
+  const deleteproduct=async(req,res)=>{
+      try {
+        const {id}=req.params
+        const  deleteproduct=await Products.findByIdAndDelete(id)
+        res.json({message:"delete successfully",data:deleteproduct})
+      } catch (error) {
+        console.error("Error delete product:", error);
+        res.status(500).json({ message: "An unexpected error occurred" });
+      }
+  }
+
+export { newProducts,getProduct ,getProductByID,updateproduct,deleteproduct};
 
 
 
